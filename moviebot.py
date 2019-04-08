@@ -15,16 +15,10 @@ def get_new_movie():
     parser = lxml.html.fromstring(page)
 
     # Получение списка названий фильмов
-    path_movie_name = ".films_right > a > span > span"
-    movie_name = []
-    for i in parser.cssselect(path_movie_name):
-        movie_name.append(i.text)
+    movie_name = parser.xpath('.//div[@class = "films_right"]/a/span/span/text()')
 
     # Получение списка жанров фильмов
-    path_movie_info = ".films_info"
-    movie_info = []
-    for i in parser.cssselect(path_movie_info):
-        movie_info.append(i.text)
+    movie_info = parser.xpath('.//span[@class = "films_info"]/text()')
 
     # Получение списка ссылок на фильмы
     movie_link = parser.xpath('.//div[@class = "films_right"]/a/@href')
