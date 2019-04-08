@@ -1,4 +1,4 @@
-﻿import vk_api
+import vk_api
 import random
 import lxml.html
 import requests
