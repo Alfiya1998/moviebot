@@ -2,16 +2,56 @@
 import random
 import lxml.html
 import requests
+import json
+from vk_api import VkUpload
 from vk_api.longpoll import VkLongPoll, VkEventType
+
+keyboard = {
+    "one_time": None,
+    "buttons": [
+      [{
+        "action": {
+          "type": "text",
+          "payload": "{\"button\": \"1\"}",
+          "label": "Колизей"
+        },
+        "color": "positive"
+      },
+     {
+        "action": {
+          "type": "text",
+          "payload": "{\"button\": \"2\"}",
+          "label": "СемьЯ"
+        },
+        "color": "positive"
+      },
+      {
+        "action": {
+          "type": "text",
+          "payload": "{\"button\": \"3\"}",
+          "label": "Кристалл"
+        },
+        "color": "positive"
+      }],
+     [{
+        "action": {
+          "type": "text",
+          "payload": "{\"button\": \"4\"}",
+          "label": "Поиск по жанру"
+        },
+        "color": "primary"
+      }]
+    ]
+  }
 
 def write_msg(user_id, message):
     vk_session.method("messages.send", {"user_id": user_id, "message": message, "random_id": get_random_id()})
 
-def write_new_movie(user_id):
-    vk_session.method("messages.send", {"user_id": user_id, "message": get_new_movie(), "random_id": get_random_id()})
+def write_new_movie(user_id, keyboard, cinema_id):
+    vk_session.method("messages.send", {"user_id": user_id, "message": get_new_movie(cinema_id), "random_id": get_random_id(), "keyboard": keyboard})
 
-def get_new_movie():
-    page = requests.get('https://perm.kinoafisha.info/cinema/4283797/').text
+def get_new_movie(cinema_id):
+    page = requests.get('https://perm.kinoafisha.info/cinema/' + cinema_id).text
     parser = lxml.html.fromstring(page)
 
     # Получение списка названий фильмов
@@ -79,28 +119,30 @@ def get_random_id():
     return random.getrandbits(31) * random.choice([-1, 1])
 
 # API-ключ созданный ранее
-token = "9bf9a118f6935e61fdc7e437c97a3f767663719de2747b6ba29a6477a86e488b1fa8a7116514c4cb1c616"
+token = "e132b79daa44a0025aa2e72e484a1f3ddd18f8f6d685ed2a4efa1b4eb37685aab33746c1bb42b5b7dffc8"
 
 # Авторизуемся как сообщество
 vk_session = vk_api.VkApi(token=token)
 
+# Для загрузки изображений
+upload = VkUpload(vk_session)
+
 longpoll = VkLongPoll(vk_session)
+
+cinema = {"колизей": "4283797/", "семья": "5192443/", "кристалл": "8088251/"}
 
 for event in longpoll.listen():
 
-    # Если пришло новое сообщение
-    if event.type == VkEventType.MESSAGE_NEW:
+    # Если пришло новое сообщение и если оно имеет метку для меня( то есть бота)
+    if event.type == VkEventType.MESSAGE_NEW and event.to_me:
 
-        # Если оно имеет метку для меня( то есть бота)
-        if event.to_me:
+        # Сообщение от пользователя или текст кнопки
+        request = event.text.lower()
 
-            # Сообщение от пользователя
-            request = event.text
-
-            # Логика ответа
-            if request == "привет":
-                write_msg(event.user_id, "Привет")
-            elif request == "новинки":
-                write_header_movie(event.user_id)
-            else:
-                write_msg(event.user_id, "Я вас не понимаю(((")
+        # Логика ответа
+        if request == "привет":
+            write_msg(event.user_id, "Привет")
+        elif request == "колизей" or request == "семья" or request == "кристалл":
+            write_new_movie(event.user_id, json.dumps(keyboard, ensure_ascii=False), cinema[request])
+        else:
+            write_msg(event.user_id, "Я вас не понимаю(((")
