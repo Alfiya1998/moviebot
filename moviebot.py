@@ -95,7 +95,7 @@ for event in longpoll.listen():
         if event.to_me:
 
             # Сообщение от пользователя
-            request = event.text
+            request = event.text.lower()
 
             # Логика ответа
             if request == "привет":
