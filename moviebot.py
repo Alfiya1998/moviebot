@@ -136,8 +136,13 @@ for event in longpoll.listen():
     # Если пришло новое сообщение и если оно имеет метку для меня( то есть бота)
     if event.type == VkEventType.MESSAGE_NEW and event.to_me:
 
+<<<<<<< HEAD
         # Сообщение от пользователя или текст кнопки
         request = event.text.lower()
+=======
+            # Сообщение от пользователя
+            request = event.text.lower()
+>>>>>>> d25fc371ee81e94d10a1524a5b93bfe6bf576b3e
 
         # Логика ответа
         if request == "привет":
