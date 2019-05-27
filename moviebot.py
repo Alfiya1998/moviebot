@@ -39,7 +39,7 @@ def sleep_pars(time_sleep):
 		print("pars site")
 
 def create_thread():
-	thread_timer = Thread(daemon = True, target = sleep_pars, args = (300, ))
+	thread_timer = Thread(name = "Thread_timer", daemon = True, target = sleep_pars, args = (300, ))
 	thread_timer.start()
 	return thread_timer
 
@@ -116,31 +116,32 @@ def change_value_pars():
 # API-ключ созданный ранее
 token = "19b0bec16f37a5ef6754988c36a9759c11a92e4d3a2f6210c2809ab6088921f92b99188cb9d028d7b1695"
 
-# Авторизуемся как сообщество
-vk_session = vk_api.VkApi(token=token)
-
-longpoll = VkLongPoll(vk_session)
 
 cinema = {"колизей": ID_COLISEUM, "семья": ID_FAMILY, "кристалл": ID_KRISTALL} 
 
-thread_timer = create_thread()
+def main():
+	vk_session = vk_api.VkApi(token=token)
 
-for event in longpoll.listen():
+	longpoll = VkLongPoll(vk_session)
 
-    # Если пришло новое сообщение и если оно имеет метку для меня( то есть бота)
-    if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-        request = event.text.lower().replace(" ", "")
+	thread_timer = create_thread()
+	
+	for event in longpoll.listen():
+		if event.type == VkEventType.MESSAGE_NEW and event.to_me:
+			request = event.text.lower().replace(" ", "")
 
-        # Логика ответа
-        if request == "привет":
-            write_msg(event.user_id, "Привет! Я чат-бот, который позволит тебе узнать расписания сеансов в городе Пермь на сегодня. Для начала работы, напишите любой из кинотеатров: Колизей, СемьЯ, Кристалл.")
-        elif request == "колизей" or request == "семья" or request == "кристалл":
-            write_new_movie(event.user_id, json.dumps(keyboard, ensure_ascii=False), cinema[request])
-        elif request == "поискпожанру":
-        	write_msg(event.user_id, "Для поиска фильма по жанру напишите один из перечисленных жанров:\n{0}".format(genre_msg))
-        elif request in my_genre:
-        	listtem = find_genre(request)
-        	print(listtem)
-        	write_recomendet(event.user_id, listtem)
-        else:
-            write_msg(event.user_id, "Проверьте введенное слово, вы, кажется, ошиблись :)")
+			if request == "привет":
+				write_msg(event.user_id, "Привет! Я чат-бот, который позволит тебе узнать расписания сеансов в городе Пермь на сегодня. Для начала работы, напишите любой из кинотеатров: Колизей, СемьЯ, Кристалл.")
+			elif request == "колизей" or request == "семья" or request == "кристалл":
+				write_new_movie(event.user_id, json.dumps(keyboard, ensure_ascii=False), cinema[request])
+			elif request == "поискпожанру":
+				write_msg(event.user_id, "Для поиска фильма по жанру напишите один из перечисленных жанров:\n{0}".format(genre_msg))
+			elif request in my_genre:
+				listtem = find_genre(request)
+				print(listtem)
+				write_recomendet(event.user_id, listtem)
+			else:
+				write_msg(event.user_id, "Проверьте введенное слово, вы, кажется, ошиблись :)")
+
+if __name__ == "__main__":
+	main()
