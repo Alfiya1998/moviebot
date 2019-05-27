@@ -23,7 +23,7 @@ MSG_RESULT_CINEMA_FAMILY = pars.get_new_movie(ID_FAMILY)
 MSG_RESULT_CINEMA_COLISEUM = pars.get_new_movie(ID_COLISEUM)
 MSG_RESULT_CINEMA_KRISTALL = pars.get_new_movie(ID_KRISTALL)
 
-#MSG_RESULT_GENRE = pars.all_genres() here change
+MSG_RESULT_GENRE = pars.all_genres(my_genre)
 
 def find_genre(listword):
   wordlist=re.sub("[^\w]", " ", listword).split()
@@ -39,7 +39,7 @@ def sleep_pars(time_sleep):
 		print("pars site")
 
 def create_thread():
-	thread_timer = Thread(target = sleep_pars, args = (300, ))
+	thread_timer = Thread(daemon = True, target = sleep_pars, args = (300, ))
 	thread_timer.start()
 	return thread_timer
 
@@ -88,7 +88,10 @@ def write_new_movie(user_id, keyboard, cinema_id):
     vk_session.method("messages.send", {"user_id": user_id, "message": get_message(cinema_id), "random_id": get_random_id(), "keyboard": keyboard})
 
 def write_recomendet(user_id, genre):
-	vk_session.method("messages.send", {"user_id": user_id, "message": MSG_RESULT_GENRE[genre], "random_id": get_random_id()})
+	if len(genre) == 1:
+		vk_session.method("messages.send", {"user_id": user_id, "message": MSG_RESULT_GENRE[str(genre[0])], "random_id": get_random_id()})
+	elif len(genre) > 1:
+		vk_session.method("messages.send", {"user_id": user_id, "message": pars.parser_listgenre(genre), "random_id": get_random_id()})
 
 def get_message(cinema_id):
 	if cinema_id == ID_COLISEUM:
@@ -107,7 +110,7 @@ def change_value_pars():
 	MSG_RESULT_CINEMA_COLISEUM = pars.get_new_movie(ID_COLISEUM)
 	MSG_RESULT_CINEMA_KRISTALL = pars.get_new_movie(ID_KRISTALL)
 
-	#MSG_RESULT_GENRE = pars.all_genres() here change
+	MSG_RESULT_GENRE = pars.all_genres(my_genre)
 
 
 # API-ключ созданный ранее
@@ -120,7 +123,7 @@ longpoll = VkLongPoll(vk_session)
 
 cinema = {"колизей": ID_COLISEUM, "семья": ID_FAMILY, "кристалл": ID_KRISTALL} 
 
-create_thread()
+thread_timer = create_thread()
 
 for event in longpoll.listen():
 
@@ -137,6 +140,7 @@ for event in longpoll.listen():
         	write_msg(event.user_id, "Для поиска фильма по жанру напишите один из перечисленных жанров:\n{0}".format(genre_msg))
         elif request in my_genre:
         	listtem = find_genre(request)
+        	print(listtem)
         	write_recomendet(event.user_id, listtem)
         else:
             write_msg(event.user_id, "Проверьте введенное слово, вы, кажется, ошиблись :)")
