@@ -33,7 +33,11 @@ def parser_listgenre(word):
     return str
 
 def all_genres(genres):
-    #anya
+    result = {}
+    for genre in genres:
+        result[genre] = parser_listgenre([genre])
+    print(result)
+    return result
 
 def get_new_movie(cinema_id):
 	
