@@ -23,10 +23,13 @@ MSG_RESULT_CINEMA_FAMILY = pars.get_new_movie(ID_FAMILY)
 MSG_RESULT_CINEMA_COLISEUM = pars.get_new_movie(ID_COLISEUM)
 MSG_RESULT_CINEMA_KRISTALL = pars.get_new_movie(ID_KRISTALL)
 
+#MSG_RESULT_GENRE = pars.all_genres() here change
+
 def find_genre(listword):
   wordlist=re.sub("[^\w]", " ", listword).split()
   result  = list(set(wordlist) & set(my_genre))
   return result
+
 
 def sleep_pars(time_sleep):
 	while True:
@@ -35,9 +38,10 @@ def sleep_pars(time_sleep):
 		change_value_pars()
 		print("pars site")
 
-def create_threads():
+def create_thread():
 	thread_timer = Thread(target = sleep_pars, args = (300, ))
 	thread_timer.start()
+	return thread_timer
 
 keyboard = {
     "one_time": None,
@@ -84,7 +88,7 @@ def write_new_movie(user_id, keyboard, cinema_id):
     vk_session.method("messages.send", {"user_id": user_id, "message": get_message(cinema_id), "random_id": get_random_id(), "keyboard": keyboard})
 
 def write_recomendet(user_id, genre):
-	vk_session.method("messages.send", {"user_id": user_id, "message": pars.parser_listgenre(genre), "random_id": get_random_id()})
+	vk_session.method("messages.send", {"user_id": user_id, "message": MSG_RESULT_GENRE[genre], "random_id": get_random_id()})
 
 def get_message(cinema_id):
 	if cinema_id == ID_COLISEUM:
@@ -103,6 +107,8 @@ def change_value_pars():
 	MSG_RESULT_CINEMA_COLISEUM = pars.get_new_movie(ID_COLISEUM)
 	MSG_RESULT_CINEMA_KRISTALL = pars.get_new_movie(ID_KRISTALL)
 
+	#MSG_RESULT_GENRE = pars.all_genres() here change
+
 
 # API-ключ созданный ранее
 token = "19b0bec16f37a5ef6754988c36a9759c11a92e4d3a2f6210c2809ab6088921f92b99188cb9d028d7b1695"
@@ -112,9 +118,9 @@ vk_session = vk_api.VkApi(token=token)
 
 longpoll = VkLongPoll(vk_session)
 
-cinema = {"колизей": ID_COLISEUM, "семья": ID_FAMILY, "кристалл": ID_KRISTALL}
+cinema = {"колизей": ID_COLISEUM, "семья": ID_FAMILY, "кристалл": ID_KRISTALL} 
 
-create_threads()
+create_thread()
 
 for event in longpoll.listen():
 
