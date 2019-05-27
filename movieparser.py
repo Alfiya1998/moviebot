@@ -32,6 +32,8 @@ def parser_listgenre(word):
         str = "Я не смог найти фильмы с данным жанром";
     return str
 
+def all_genres(genres):
+    #anya
 
 def get_new_movie(cinema_id):
 	
