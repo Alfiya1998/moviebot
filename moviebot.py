@@ -16,9 +16,12 @@ genre_msg = ""
 for i in my_genre:
   genre_msg += i + "\n"
 
-MSG_RESULT_CINEMA_FAMILY = pars.get_new_movie("5192443/")
-MSG_RESULT_CINEMA_COLISEUM = pars.get_new_movie("4283797/")
-MSG_RESULT_CINEMA_KRISTALL = pars.get_new_movie("8088251/")
+ID_FAMILY = "5192443"
+ID_COLISEUM = "4283797"
+ID_KRISTALL = "8088251"
+MSG_RESULT_CINEMA_FAMILY = pars.get_new_movie(ID_FAMILY)
+MSG_RESULT_CINEMA_COLISEUM = pars.get_new_movie(ID_COLISEUM)
+MSG_RESULT_CINEMA_KRISTALL = pars.get_new_movie(ID_KRISTALL)
 
 def find_genre(listword):
   wordlist=re.sub("[^\w]", " ", listword).split()
@@ -84,12 +87,11 @@ def write_recomendet(user_id, genre):
 	vk_session.method("messages.send", {"user_id": user_id, "message": pars.parser_listgenre(genre), "random_id": get_random_id()})
 
 def get_message(cinema_id):
-	cinema_id.replace("/", "")
-	if cinema_id == str(4283797):
+	if cinema_id == ID_COLISEUM:
 		return MSG_RESULT_CINEMA_COLISEUM
-	if cinema_id == str(5192443):
+	if cinema_id == ID_FAMILY:
 		return MSG_RESULT_CINEMA_FAMILY
-	if cinema_id == str(8088251):
+	if cinema_id == ID_KRISTALL:
 		return MSG_RESULT_CINEMA_KRISTALL
 
 
@@ -97,9 +99,9 @@ def get_random_id():
     return random.getrandbits(31) * random.choice([-1, 1])
 
 def change_value_pars():
-	MSG_RESULT_CINEMA_FAMILY = pars.get_new_movie("4283797/")
-	MSG_RESULT_CINEMA_COLISEUM = pars.get_new_movie("4283797/")
-	MSG_RESULT_CINEMA_KRISTALL = pars.get_new_movie("8088251/")
+	MSG_RESULT_CINEMA_FAMILY = pars.get_new_movie(ID_FAMILY)
+	MSG_RESULT_CINEMA_COLISEUM = pars.get_new_movie(ID_COLISEUM)
+	MSG_RESULT_CINEMA_KRISTALL = pars.get_new_movie(ID_KRISTALL)
 
 
 # API-ключ созданный ранее
@@ -110,7 +112,7 @@ vk_session = vk_api.VkApi(token=token)
 
 longpoll = VkLongPoll(vk_session)
 
-cinema = {"колизей": "4283797/", "семья": "5192443/", "кристалл": "8088251/"}
+cinema = {"колизей": ID_COLISEUM, "семья": ID_FAMILY, "кристалл": ID_KRISTALL}
 
 create_threads()
 
