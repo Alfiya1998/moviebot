@@ -119,6 +119,24 @@ token = "19b0bec16f37a5ef6754988c36a9759c11a92e4d3a2f6210c2809ab6088921f92b99188
 
 cinema = {"колизей": ID_COLISEUM, "семья": ID_FAMILY, "кристалл": ID_KRISTALL} 
 
+def str_cleaner(request):
+
+  request = request.lower()
+  request = request.replace(" ", "")
+  request = request.replace("'", "")
+  request = request.replace("\\", "")
+  request = request.replace("/", "")
+  request = request.replace("=", "")
+  request = request.replace("+", "")
+  request = request.replace("-", "")
+  request = request.replace("?", "")
+  request = request.replace("!", "")
+  request = request.replace("%", "")
+  request = request.replace("|", "")
+  request = request.replace("?", "")
+
+  return request
+
 def main():
 	vk_session = vk_api.VkApi(token=token)
 
@@ -128,7 +146,8 @@ def main():
 	
 	for event in longpoll.listen():
 		if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-			request = event.text.lower().replace(" ", "")
+      
+			request = str_cleaner(event.text)
 
 			if request == "привет":
 				write_msg(event.user_id, "Привет! Я чат-бот, который позволит тебе узнать расписания сеансов в городе Пермь на сегодня. Для начала работы, напишите любой из кинотеатров: Колизей, СемьЯ, Кристалл.")
@@ -138,7 +157,6 @@ def main():
 				write_msg(event.user_id, "Для поиска фильма по жанру напишите один из перечисленных жанров:\n{0}".format(genre_msg))
 			elif request in my_genre:
 				listtem = find_genre(request)
-				print(listtem)
 				write_recomendet(event.user_id, listtem)
 			else:
 				write_msg(event.user_id, "Проверьте введенное слово, вы, кажется, ошиблись :)")
