@@ -2,7 +2,7 @@ import lxml.html
 import requests
 
 def parser_listgenre(word):
-    page = requests.get('https://perm.kinoafisha.info/cinema/4283797/').text
+    page = requests.get('https://perm.kinoafisha.info/cinema').text
     parser = lxml.html.fromstring(page)
     # название фильма
     movie_name = parser.xpath('.//div[@class = "films_right"]/a/span/span/text()')
