@@ -1,4 +1,4 @@
-﻿import vk_api
+import vk_api
 import random
 import lxml.html
 import requests
@@ -120,22 +120,10 @@ token = "19b0bec16f37a5ef6754988c36a9759c11a92e4d3a2f6210c2809ab6088921f92b99188
 cinema = {"колизей": ID_COLISEUM, "семья": ID_FAMILY, "кристалл": ID_KRISTALL} 
 
 def str_cleaner(request):
-
-  request = request.lower()
-  request = request.replace(" ", "")
-  request = request.replace("'", "")
-  request = request.replace("\\", "")
-  request = request.replace("/", "")
-  request = request.replace("=", "")
-  request = request.replace("+", "")
-  request = request.replace("-", "")
-  request = request.replace("?", "")
-  request = request.replace("!", "")
-  request = request.replace("%", "")
-  request = request.replace("|", "")
-  request = request.replace("?", "")
-
-  return request
+	s = str(request)
+	s = s.lower()
+	s = re.sub("[ !'\\/=+-?%|]", "", s)
+	return s
 
 def main():
 	vk_session = vk_api.VkApi(token=token)
